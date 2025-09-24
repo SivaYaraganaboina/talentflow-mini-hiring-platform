@@ -5,6 +5,24 @@
   force = true
 
 [[redirects]]
+  from = "/static/*"
+  to = "/static/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*.js"
+  to = "/:splat.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*.css"
+  to = "/:splat.css"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

@@ -403,21 +403,31 @@ const handlers = [
 
       const { jobId } = params;
       const assessmentData = await request.json() as Partial<Assessment>;
+      
+      console.log('MSW: Saving assessment for job:', jobId, 'with data:', assessmentData);
 
       const existingAssessment = await db.assessments.where('jobId').equals(jobId as string).first();
 
       if (existingAssessment) {
-        await db.assessments.update(existingAssessment.id, {
-          ...assessmentData,
+        // Update existing assessment
+        const updateData = {
+          title: assessmentData.title || existingAssessment.title,
+          description: assessmentData.description || existingAssessment.description,
+          sections: assessmentData.sections || existingAssessment.sections,
+          enableScoring: assessmentData.enableScoring !== undefined ? assessmentData.enableScoring : existingAssessment.enableScoring,
           updatedAt: new Date().toISOString()
-        });
+        };
+        
+        await db.assessments.update(existingAssessment.id, updateData);
         const updated = await db.assessments.get(existingAssessment.id);
+        console.log('MSW: Updated existing assessment:', updated?.id);
         return HttpResponse.json({ data: updated });
       } else {
+        // Create new assessment
         const newAssessment: Assessment = {
-          id: `assessment-${Date.now()}`,
+          id: `assessment-${jobId}-${Date.now()}`,
           jobId: jobId as string,
-          title: assessmentData.title || '',
+          title: assessmentData.title || 'Untitled Assessment',
           description: assessmentData.description || '',
           sections: assessmentData.sections || [],
           enableScoring: assessmentData.enableScoring || false,
@@ -426,9 +436,11 @@ const handlers = [
         };
 
         await db.assessments.add(newAssessment);
+        console.log('MSW: Created new assessment:', newAssessment.id);
         return HttpResponse.json({ data: newAssessment });
       }
     } catch (error) {
+      console.error('MSW: Assessment save error:', error);
       return HttpResponse.json({ error: 'Failed to save assessment' }, { status: 500 });
     }
   }),
