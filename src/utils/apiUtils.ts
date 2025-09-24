@@ -1,7 +1,7 @@
 import { offlineQueue } from '../services/offlineQueue';
 
 // Direct IndexedDB fallback when MSW fails
-const directDbFallback = async (url: string): Promise<Response> => {
+const directDbFallback = async (url: string, options?: RequestInit): Promise<Response> => {
   const { db } = await import('../services/database');
   
   try {
@@ -14,6 +14,54 @@ const directDbFallback = async (url: string): Promise<Response> => {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
+    }
+    
+    // Handle assessment endpoints
+    const assessmentMatch = url.match(/\/api\/assessments\/([^/?]+)$/);
+    if (assessmentMatch) {
+      const jobId = assessmentMatch[1];
+      
+      if (options?.method === 'PUT') {
+        // Handle assessment save
+        const assessmentData = JSON.parse(options.body as string);
+        const existingAssessment = await db.assessments.where('jobId').equals(jobId).first();
+        
+        if (existingAssessment) {
+          await db.assessments.update(existingAssessment.id, {
+            ...assessmentData,
+            updatedAt: new Date().toISOString()
+          });
+          const updated = await db.assessments.get(existingAssessment.id);
+          return new Response(JSON.stringify({ data: updated }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        } else {
+          const newAssessment = {
+            id: `assessment-${jobId}-${Date.now()}`,
+            jobId,
+            title: assessmentData.title || 'Untitled Assessment',
+            description: assessmentData.description || '',
+            sections: assessmentData.sections || [],
+            enableScoring: assessmentData.enableScoring || false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          await db.assessments.add(newAssessment);
+          return new Response(JSON.stringify({ data: newAssessment }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+      } else {
+        // Handle assessment get
+        const assessment = await db.assessments.where('jobId').equals(jobId).first();
+        return new Response(JSON.stringify({ data: assessment || null }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
     }
     
     // Handle applications with query params
@@ -72,15 +120,7 @@ export const apiCall = async (url: string, options?: RequestInit, retries = 1): 
     
     return response;
   } catch (error) {
-    // Immediately use IndexedDB fallback for GET requests
-    if (!options || options.method === 'GET') {
-      return await directDbFallback(url);
-    }
-    
-    // For write operations, return success
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    // Use IndexedDB fallback for all requests
+    return await directDbFallback(url, options);
   }
 };
