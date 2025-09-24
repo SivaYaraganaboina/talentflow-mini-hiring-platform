@@ -18,6 +18,7 @@ import TakeAssessment from './pages/TakeAssessment';
 import JobDetailForCandidate from './pages/JobDetailForCandidate';
 import OfflineIndicator from './components/OfflineIndicator';
 import CandidateKanbanSimple from './components/CandidateKanbanSimple';
+import FeatureChecker from './components/FeatureChecker';
 import ToastProvider from './components/ui/ToastProvider';
 import { useAuth, useTheme } from './store';
 import { initializeDatabase } from './services/database';
@@ -79,6 +80,7 @@ const App: React.FC = () => {
                     <Route path="/candidates" element={<Candidates />} />
                     <Route path="/assessments" element={<Assessments />} />
                     <Route path="/assessments/create" element={<Assessments />} />
+                    <Route path="/feature-check" element={<FeatureChecker />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </>
                 ) : (
@@ -88,6 +90,7 @@ const App: React.FC = () => {
                     <Route path="/jobs" element={<JobsBoardForCandidatesProfessional />} />
                     <Route path="/my-applications" element={<MyApplicationsProfessional />} />
                     <Route path="/take-assessment/:jobId" element={<TakeAssessment />} />
+                    <Route path="/feature-check" element={<FeatureChecker />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </>
                 )}
