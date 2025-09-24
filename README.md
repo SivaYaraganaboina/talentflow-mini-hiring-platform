@@ -47,7 +47,7 @@ A modern, full-featured hiring platform built with React, TypeScript, and Tailwi
 
 ## 🚀 Quick Access
 
-**🌐 Live Demo**: [TalentFlow Application](https://talentflow-hiring-platform.netlify.app)
+**🌐 Live Demo**: [TalentFlow Application](https://talentflow-mini-hiring-platform.vercel.app/)
 
 **📂 GitHub Repository**: [https://github.com/yourusername/talentflow-hiring-platform](https://github.com/yourusername/talentflow-hiring-platform)
 
@@ -633,10 +633,6 @@ PATCH  /api/applications/:id/stage                      # Update application sta
 3. Commit changes: `git commit -m 'Add amazing feature'`
 4. Push to branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
