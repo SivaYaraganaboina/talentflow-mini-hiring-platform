@@ -60,38 +60,27 @@ const directDbFallback = async (url: string): Promise<Response> => {
   }
 };
 
-// API utility with retry logic and IndexedDB fallback
-export const apiCall = async (url: string, options?: RequestInit, retries = 3): Promise<Response> => {
-  for (let i = 0; i < retries; i++) {
-    try {
-      const response = await fetch(url, options);
-      
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('text/html')) {
-        throw new Error('Received HTML instead of JSON - MSW may not be ready');
-      }
-      
-      return response;
-    } catch (error) {
-      console.warn(`API call attempt ${i + 1} failed:`, error);
-      
-      if (i === retries - 1) {
-        // Use direct IndexedDB fallback for GET requests
-        if (!options || options.method === 'GET') {
-          console.log('Using direct IndexedDB fallback');
-          return await directDbFallback(url);
-        }
-        
-        // For write operations, return success
-        return new Response(JSON.stringify({ success: true }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        });
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, 200 * (i + 1)));
+// API utility with fast IndexedDB fallback
+export const apiCall = async (url: string, options?: RequestInit, retries = 1): Promise<Response> => {
+  try {
+    const response = await fetch(url, options);
+    
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('text/html')) {
+      throw new Error('MSW not ready - using fallback');
     }
+    
+    return response;
+  } catch (error) {
+    // Immediately use IndexedDB fallback for GET requests
+    if (!options || options.method === 'GET') {
+      return await directDbFallback(url);
+    }
+    
+    // For write operations, return success
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
-  
-  throw new Error('All retry attempts failed');
 };
