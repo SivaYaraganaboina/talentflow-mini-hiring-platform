@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/((?!static/).*)", "destination": "/index.html" }
+    { "source": "/((?!api|mockServiceWorker\\.js|static|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json)).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
