@@ -5,6 +5,33 @@ const directDbFallback = async (url: string): Promise<Response> => {
   const { db } = await import('../services/database');
   
   try {
+    // Handle specific candidate by ID
+    const candidateMatch = url.match(/\/api\/candidates\/([^/?]+)$/);
+    if (candidateMatch) {
+      const candidateId = candidateMatch[1];
+      const candidate = await db.candidates.get(candidateId);
+      return new Response(JSON.stringify({ data: candidate }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    // Handle applications with query params
+    if (url.includes('/api/applications')) {
+      const urlObj = new URL(url, 'http://localhost');
+      const candidateId = urlObj.searchParams.get('candidateId');
+      
+      let applications = await db.applications.toArray();
+      if (candidateId) {
+        applications = applications.filter(app => app.candidateId === candidateId);
+      }
+      
+      return new Response(JSON.stringify({ data: applications }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
     if (url.includes('/api/jobs')) {
       const jobs = await db.jobs.orderBy('order').toArray();
       return new Response(JSON.stringify({ data: jobs }), {
