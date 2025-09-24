@@ -13,25 +13,34 @@ async function initializeApp() {
     // Start MSW worker (assignment requirement)
     const { worker } = await import('./services/mockApi');
     
-    // Production-optimized MSW startup
+    // Enhanced MSW startup for production stability
     await worker.start({
       onUnhandledRequest: 'bypass',
       serviceWorker: {
-        url: '/mockServiceWorker.js',
-        options: {
-          scope: '/'
-        }
+        url: '/mockServiceWorker.js'
       },
-      quiet: process.env.NODE_ENV === 'production'
+      quiet: false // Always show logs for debugging
     });
     
-    console.log('MSW initialized for assignment compliance');
+    console.log('✅ MSW initialized successfully');
     
-    // Brief delay for service worker registration
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Wait for service worker to be fully ready
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Test MSW functionality
+    try {
+      const testResponse = await fetch('/api/jobs?page=1&pageSize=1');
+      if (testResponse.ok) {
+        console.log('✅ MSW API test successful');
+      } else {
+        console.warn('⚠️ MSW API test failed, fallback will handle requests');
+      }
+    } catch (testError) {
+      console.warn('⚠️ MSW test request failed, fallback active');
+    }
   } catch (error) {
-    console.error('MSW initialization failed, using fallback:', error);
-    // Continue execution - fallback will handle API calls
+    console.error('❌ MSW initialization failed, using IndexedDB fallback:', error);
+    // Continue execution - robust fallback system will handle all API calls
   }
 
   const container = document.getElementById('root');
