@@ -3,21 +3,29 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles/globals.css';
 
-// Initialize MSW for both development and production
+// Initialize MSW with better error handling
 async function initializeApp() {
   try {
+    // Initialize database first
+    const { initializeDatabase } = await import('./services/database');
+    await initializeDatabase();
+    
+    // Then start MSW
     const { worker } = await import('./services/mockApi');
     await worker.start({
       onUnhandledRequest: 'bypass',
       serviceWorker: {
         url: '/mockServiceWorker.js'
-      }
+      },
+      quiet: false
     });
     console.log('MSW worker started successfully');
-    // Add delay to ensure MSW is fully ready
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Wait longer for MSW to be fully ready
+    await new Promise(resolve => setTimeout(resolve, 2000));
   } catch (error) {
     console.error('Failed to start MSW worker:', error);
+    // Continue without MSW - app will use fallback
   }
 
   const container = document.getElementById('root');
