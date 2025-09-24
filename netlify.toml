@@ -1,4 +1,10 @@
 [[redirects]]
+  from = "/mockServiceWorker.js"
+  to = "/mockServiceWorker.js"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
@@ -30,3 +36,10 @@
   for = "/manifest.json"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/mockServiceWorker.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Service-Worker-Allowed = "/"
+    Cache-Control = "no-cache, no-store, must-revalidate"

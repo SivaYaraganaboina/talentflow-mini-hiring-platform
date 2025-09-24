@@ -20,7 +20,7 @@ async function initializeApp() {
       quiet: process.env.NODE_ENV === 'production'
     });
     
-    console.log('MSW worker started successfully');
+    // MSW worker started successfully
     await new Promise(resolve => setTimeout(resolve, 1000));
   } catch (error) {
     console.error('Failed to start MSW worker:', error);
