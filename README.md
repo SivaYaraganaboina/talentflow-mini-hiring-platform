@@ -49,7 +49,7 @@ A modern, full-featured hiring platform built with React, TypeScript, and Tailwi
 
 **🌐 Live Demo**: [TalentFlow Application](https://talentflow-mini-hiring-platform.vercel.app/)
 
-**📂 GitHub Repository**: [https://github.com/yourusername/talentflow-hiring-platform](https://github.com/yourusername/talentflow-hiring-platform)
+**📂 GitHub Repository**: [https://github.com/yourusername/talentflow-hiring-platform](https://github.com/SivaYaraganaboina/talentflow-mini-hiring-platform)
 
 Use the credentials above to login and explore the platform.
 
