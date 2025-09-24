@@ -1,11 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/mockServiceWorker.js",
-      "destination": "/mockServiceWorker.js"
-    },
-    {
-      "source": "/((?!api|_next/static|_next/image|favicon.ico|mockServiceWorker.js|static/).*)",
+      "source": "/((?!static|mockServiceWorker\\.js|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json)).*)",
       "destination": "/index.html"
     }
   ],
@@ -24,6 +20,15 @@
         {
           "key": "Cache-Control",
           "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }
