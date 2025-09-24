@@ -1,27 +1,51 @@
-[[redirects]]
-  from = "/mockServiceWorker.js"
-  to = "/mockServiceWorker.js"
-  status = 200
-  force = true
-
+# Serve static assets directly (no redirect)
 [[redirects]]
   from = "/static/*"
   to = "/static/:splat"
   status = 200
-  force = true
+  force = false
 
+# Serve JavaScript files directly
 [[redirects]]
   from = "/*.js"
   to = "/:splat.js"
   status = 200
-  force = true
+  force = false
 
+# Serve CSS files directly
 [[redirects]]
   from = "/*.css"
   to = "/:splat.css"
   status = 200
-  force = true
+  force = false
 
+# Serve other assets directly
+[[redirects]]
+  from = "/*.json"
+  to = "/:splat.json"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/*.ico"
+  to = "/:splat.ico"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/*.png"
+  to = "/:splat.png"
+  status = 200
+  force = false
+
+# MSW service worker
+[[redirects]]
+  from = "/mockServiceWorker.js"
+  to = "/mockServiceWorker.js"
+  status = 200
+  force = false
+
+# SPA fallback - MUST be last
 [[redirects]]
   from = "/*"
   to = "/index.html"
